@@ -1,5 +1,5 @@
 // Service worker dell'app dello studio. Cancella solo le PROPRIE cache vecchie (if-v*), mai quelle delle app dei fotografi sullo stesso dominio.
-const C='if-v27',B='/infinity-frame-studios/';
+const C='if-v29',B='/infinity-frame-studios/';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>/^if-v\d+$/.test(x)&&x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
 // notifiche push (consegne alle 9 di mattina, prova): arrivano dal Worker dello studio
@@ -10,5 +10,5 @@ self.addEventListener('notificationclick',e=>{e.notification.close();const url=(
 e.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(l=>{for(const c of l){if(c.url.startsWith(location.origin+B)&&'focus' in c){if(c.navigate)c.navigate(url).catch(()=>{});return c.focus()}}return clients.openWindow(url)}))});
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==location.origin||!u.pathname.startsWith(B))return;
 // la pagina cliente non passa mai dal service worker (niente fallback all'app dello studio)
-if(u.pathname.endsWith('/cliente.html'))return;
+if(u.pathname.endsWith('/cliente.html')||u.pathname.endsWith('/video.html'))return;
 e.respondWith(fetch(e.request,e.request.mode==='navigate'||u.pathname.endsWith('/sw.js')?{cache:'no-store'}:{}).then(r=>{const c=r.clone();caches.open(C).then(x=>x.put(e.request,c));return r}).catch(()=>caches.match(e.request,{cacheName:C}).then(r=>r||(e.request.mode==='navigate'?caches.open(C).then(x=>x.match(B)):undefined))))});
