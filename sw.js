@@ -1,5 +1,5 @@
 // Service worker dell'app dello studio. Cancella solo le PROPRIE cache vecchie (if-v*), mai quelle delle app dei fotografi sullo stesso dominio.
-const C='if-v63',B='/infinity-frame-studios/';
+const C='if-v64',B='/infinity-frame-studios/';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>/^if-v\d+$/.test(x)&&x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
 // notifiche push (consegne alle 9 di mattina, prova): arrivano dal Worker dello studio
